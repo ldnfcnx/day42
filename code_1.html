@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">    
+    <title>IFE ECMAScript</title>
+</head>
+<body>            
+ <script>
+     function Store(seats){
+         this.seatsg=seats;
+         this.cash=0;
+         this.staffList={};
+     }
+     Store.prototype.invite=function(obj){
+         this.staffList[obj.id]=obj;
+     }
+     Store.prototype.layoff=function(obj){
+         delete this.staffList[obj.id];
+     }
+
+     var idCounter = 1;
+         footList1=[];
+         footList2=[];
+     function Staff(name,pay){
+         this.name=name;
+         this.pay=pay;
+         this.id=idCounter++;
+         this.workList=[];
+     }
+     Staff.prototype.finish=function(str){
+        let time=startTime();
+        this.workList.push(time+" "+str);
+     }
+     function Waiter(name,pay){
+         Staff.call(this,name,pay);
+     }
+     Waiter.prototype=Object.create(Staff.prototype);
+     Waiter.prototype.constructor =Waiter;
+     Waiter.prototype.work=function(obj){
+        if(obj.constructor==Array){
+            let footName="";
+            for(let i=0;i<obj.length;i++){
+                footList1.push(obj[i]);
+                footName+=obj[i].name+",";
+            }
+            this.finish("点单:"+footName);
+         }else{
+            remove(footList2,obj);
+            this.finish("上菜:"+obj.name);
+         }
+     }
+     function Cook(name,pay){
+         Staff.call(this,name,pay);
+     }
+     Cook.prototype=Object.create(Staff.prototype);
+     Cook.prototype.constructor =Cook;
+     Cook.prototype.work=function(obj){
+        remove(footList1,obj);
+        footList2.push(obj);
+        this.finish("烹饪:"+obj.name);
+     }
+
+     function Food(name,price,cost){
+         this.name=name;
+         this.price=price;
+         this.cost=cost;
+     }
+
+     function Client(){
+         this.foot1=[];
+         this.foot2=[];
+     }
+     Client.prototype.order=function(obj){
+         this.foot1.push(obj);
+     }
+     Client.prototype.eat=function(obj){
+         remove(this.foot1,obj);
+         this.foot2.push(obj);
+     }
+
+
+    function startTime(){
+        let now=new Date();
+            year=now.getFullYear();
+            month=now.getMonth()+1;           
+            day=now.getDate();            
+            weekDay=now.getDay();
+            h=now.getHours();
+            m=now.getMinutes();
+            s=now.getSeconds();
+            month=checkTime(month);
+            day= checkTime(day);
+            weekDay=checkWeek(weekDay);
+            h=checkTime(h);
+            m=checkTime(m);
+            s=checkTime(s);
+            return year+" 年 "+month+" 月 "+day+" 日 "+weekDay+" "+h+":"+m+":"+s;
+    }
+    function checkWeek(i){
+        switch(i){
+            case 0:
+            i ="星期日";
+            break;
+            case 1:
+            i ="星期一";
+            break;
+            case 2:
+            i ="星期二";
+            break;
+            case 3:
+            i ="星期三";
+            break;
+            case 4:
+            i ="星期四";
+            break;
+            case 5:
+            i ="星期五";
+            break;
+            case 6:
+            i ="星期六";
+            break;
+        }
+        return i;
+    }
+    function checkTime(i)
+         {if (i<10) {
+             i="0" + i
+             }
+             return i;
+         }
+    function remove(arr,obj){
+        arr.splice(arr.indexOf(obj),1);
+    }
+//测试
+var c=new Cook('liu',8000);
+console.log(c.id);
+var d=new Waiter('liu',8000);
+console.log(d.id);
+var a=new Store(30);
+d.work([1,2,3]);
+console.log(d.workList);
+console.log(footList1);
+console.log(footList2);
+a.invite(c);
+a.invite(d);
+a.layoff(c);
+console.log(a.staffList);
+
+ </script>
+</body>
+</html>
